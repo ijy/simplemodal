@@ -15,7 +15,7 @@
 		
 		// Set plugin default options
 		var defaults = {
-		      onAppend:			function() {}, // Callback inject in DOM // **WATCH**
+		      onAppend:			function() {}, // Callback inject in DOM [HELP]
 		      offsetTop:		null,
 		      overlayOpacity:	.3,
 		      overlayColor:		"#000000",
@@ -58,8 +58,7 @@
 					case "confirm":
 					
 						// Add button confirm
-						// **WATCH**
-						this.addButton(this.options.btn_ok, "btn primary btn-margin", function(){
+						this.addButton(this.options.btn_ok, "btn primary btn-margin", function() {
 							
 							// Add error handling in here later
 							// try { options.callback() } catch(err){};
@@ -185,8 +184,7 @@
 				"class" : cssClass
 			});
 			
-			// This _should_ either act on the callback function passed or hide the modal window (not the button itself)
-			// **WATCH**
+			// This _should_ either act on the callback function passed or hide the modal window (not the button itself) [CHECK]
 			btn.click(function() {
 				$.proxy((clickEvent || this.hide), this)   
 			});
@@ -216,7 +214,7 @@
 			// Add this button to the top of the modal window
 			btn-close.prependTo(".simple-modal");
 			
-			// Prevent default action & hide the modal window
+			// Prevent default action & hide the modal window [CHECK]
 			btn-close.click(function(e) {
 				e.preventDefault;
 				$.proxy(e, this).hide();
@@ -231,7 +229,7 @@
 			
 				case 'show':
 				
-					// Hide if already displaying (?)
+					// Hide if already displaying (?) [CHECK]
 					this.__overlay('hide');
 					
 					var overlay = $('<div></div>').attr({
@@ -251,8 +249,7 @@
 						}
 					}
 					
-					// Dynamic resizing
-					// [HELP]
+					// Dynamic resizing [HELP](Not sure how to convert this bind to keep the context of 'this')
 					this.__resize = this.__display.bind(this);
 					window.addEvent("resize", this.__resize );
 					
@@ -261,73 +258,28 @@
 				case 'hide':
 				
 					// Remove Event Resize
-					//window.removeEvent("resize", this._display);
+					window.removeEvent("resize", this.__display);
 					
 					// Remove Event Resize
-					window.removeEvent("keydown", this._removeSM);
+					window.removeEvent("keydown", this.__removeSM);
 					
 					// Remove Overlay
-					try{
-					  $('simple-modal-overlay').destroy();
+					try {
+						$('simple-modal-overlay').remove();
 					}
 					catch(err){}
-					// Remove Modal
-					try{
-					  $('simple-modal').destroy();
-					}
+						// Remove Modal
+						try {
+							$('simple-modal').remove();
+						}
 					catch(err){}
 				
 				break;
-				
-				}
-				
-				return;
-				
-			
-			// Mootools
-			switch(status) {
-			case 'show':
-				this._overlay('hide');
-				var overlay = new Element("div", {"id":"simple-modal-overlay"});
-				overlay.inject( $$("body")[0] );
-				overlay.setStyle("background-color", this.options.overlayColor);
-				overlay.fade("hide").fade(this.options.overlayOpacity);
-				
-				// Behaviour
-				if(this.options.overlayClick) {
-					overlay.addEvent("click", function(e){
-						if(e) e.stop();
-						this.hide();
-					}.bind(this))
-				}
-				
-				// Add Control Resize
-				this.__resize = this._display.bind(this);
-				window.addEvent("resize", this.__resize );
-				
-			break;
-			
-			case 'hide':
-			    // Remove Event Resize
-			    window.removeEvent("resize", this._display);
-			    // Remove Event Resize
-			    window.removeEvent("keydown", this._removeSM);
-			    
-			    // Remove Overlay
-			    try{
-			      $('simple-modal-overlay').destroy();
-			    }
-			    catch(err){}
-			    // Remove Modal
-			    try{
-			      $('simple-modal').destroy();
-			    }
-			    catch(err){}
-			break;
 			}
+			
 			return;
 			
-		},
+		}, // end __overlay
 		
 		__loadContents : function() {
 			
