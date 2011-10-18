@@ -287,14 +287,42 @@
 		
 		__display : function() {
 		
+			try {
+				$("simple-modal-overlay").css({
+					'height' : window.getCoordinates().height // [CHECK](Is it necessary to wrap inverted commas around the value here?)
+				});
+				
+			} catch(err) {}
+			
+			// Update position popover
+			try {
+				var offsetTop = this.options.offsetTop || 40;
+				$("simple-modal").css({
+					'top'  : 'offsetTop',
+					'left' : ((window.width() - $("simple-modal").width)/2 ) // [CHECK](Is it necessary to wrap inverted commas around the value here? && Is this correctly centering?)
+				});
+				
+			} catch(err) {}
+			
+			return;
 		},
 		
 		__addEscapeBehaviour : function() {
-		
+			
+			if (this.options.keyEsc) {
+				this.__removeSM = function(e) {
+					if(e.key == "esc") this.hide();
+				}.bind(this)
+				window.keydown(this.__removeSM);
+			}
+
 		},
 		
+		// [HELP](Not exactly sure what this is doing. I would imagine it would need to use .each() however?)
 		__template : function() {
-		
+			for (var p in d) 
+			  s=s.replace(new RegExp('{'+p+'}','g'), d[p]);
+			return s;
 		}
 		
 	};
