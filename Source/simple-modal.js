@@ -258,8 +258,8 @@ var SimpleModal = new Class({
                   }.bind(this))
                 }
                // Add Control Resize
-               this.__resize = this._display.bind(this);
-               window.addEvent("resize", this.__resize );
+               this._resize = this._display.bind(this);
+               window.addEvent("resize", this._resize );
            break;
            case 'hide':
                // Remove Event Resize

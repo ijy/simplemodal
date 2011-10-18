@@ -114,6 +114,33 @@
 						this.__addEscBehaviour();
 								
 					break;
+					
+				// Set the custom width of the Modal
+				node.css({ 'width', 'this.options.width' });
+				
+				// Hide Header &&/|| Footer
+				if(this.options.hideHeader) node.addClass('hide-header');
+				if(this.options.hideFooter) node.addClass('hide-footer');
+				
+				// Add Button X
+				if(this.options.closeButton) { 
+					this.__addCloseButton();
+				}
+				
+				// Enabled Drag Window
+				// Will require jQuery UI for this so will comment out for now...
+				/*if(this.options.draggable) {
+				
+					var headDrag = node.$(".simple-modal-header");
+					new Drag(node, { handle:headDrag });
+					
+					// Set handle cursor
+					headDrag.setStyle("cursor", "move")
+					node.addClass("draggable");
+				} */
+				
+				// Resize Stage
+				this.__display();
 			        
 		}, // end 'show'
 		
@@ -158,6 +185,7 @@
 				"class" : cssClass
 			});
 			
+			// This _should_ either act on the callback function passed or hide the modal window (not the button itself)
 			// **WATCH**
 			btn.click(function() {
 				$.proxy((clickEvent || this.hide), this)   
@@ -169,7 +197,6 @@
 		
 		__injectAllButtons : function() {
 			
-			// jQuery
 			this.buttons.each(function(i) { 
 				i.appendTo(".simple-modal-footer");
 			});
@@ -178,8 +205,7 @@
 		},
 		
 		__addCloseButton : function() {
-			
-			// jQuery
+
 			// Create a close button represented with an 'X'
 			var btn-close = $("<a></a>").attr({
 				"class" : "close",
@@ -202,31 +228,61 @@
 		__overlay : function(status) {
 			
 			switch(status) {
+			
 				case 'show':
-					this.__overlay('hide'); // Hide it on 'show'? Eh??
+				
+					// Hide if already displaying (?)
+					this.__overlay('hide');
 					
-					var overlay = $("")
+					var overlay = $('<div></div>').attr({
+						"id" : "simple-modal-overlay"
+					});
 					
-					var overlay = new Element("div", {"id":"simple-modal-overlay"});
-					overlay.inject( $$("body")[0] );
-					overlay.setStyle("background-color", this.options.overlayColor);
-					overlay.fade("hide").fade(this.options.overlayOpacity);
+					overlay.appendTo('body').css('background-color', 'this.options.overlayColor');
 					
-					// Behaviour
-					if(this.options.overlayClick) {
-						overlay.addEvent("click", function(e){
-							if(e) e.stop();
+					// Fade out first then fade in to opacity level set in options
+					overlay.fadeOut('slow').fadeTo('slow', this.options.overlayOpacity);
+					
+					// If Overlay is clicked
+					if (this.options.overlayClick) {
+						overlay.click(function(e) {
+							e.stopPropogation();
 							this.hide();
-						}.bind(this))
+						}
 					}
 					
-					// Add Control Resize
-					this.__resize = this._display.bind(this);
+					// Dynamic resizing
+					// [HELP]
+					this.__resize = this.__display.bind(this);
 					window.addEvent("resize", this.__resize );
 					
 				break;
 			
-			
+				case 'hide':
+				
+					// Remove Event Resize
+					//window.removeEvent("resize", this._display);
+					
+					// Remove Event Resize
+					window.removeEvent("keydown", this._removeSM);
+					
+					// Remove Overlay
+					try{
+					  $('simple-modal-overlay').destroy();
+					}
+					catch(err){}
+					// Remove Modal
+					try{
+					  $('simple-modal').destroy();
+					}
+					catch(err){}
+				
+				break;
+				
+				}
+				
+				return;
+				
 			
 			// Mootools
 			switch(status) {
